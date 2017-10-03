@@ -1,13 +1,13 @@
 [![License](https://img.shields.io/github/license/Graylog2/graylog2-server.svg)](https://www.gnu.org/licenses/gpl-3.0.txt)
 
-# PulsesSecure Content Pack
+# PulseSecure Content Pack
 
 This PulseSecure content pack can be used to collect and enrich your log data for
-a efficent analyzing and visibility 
+a efficent analyzing and visibility
 
 
 ## Includes
-* TCP and UDP Inputs on port 1514 with extractors using grok
+* TCP and UDP Input on port 1514 with a grok extractor
 * PulseSecure grok patttern
 * "PulseSecure Global" Stream with all extracted messages
 * Stream "PulseSecure Failed Logins" contains all messages with failed status
@@ -24,11 +24,13 @@ a efficent analyzing and visibility
 Will follow soon.
 
 ## License
-  Copyright (C) 2017  NETWAYS GmbH/Daniel Neuberger info@netways.de
 
-    This program is free software: you can redistribute it and/or modify
+    Copyright (C) 2017 NETWAYS GmbH <info@netways.de>
+                       Daniel Neuberger
+
+    This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -36,5 +38,6 @@ Will follow soon.
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
