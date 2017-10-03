@@ -1,0 +1,151 @@
+{
+  "name": "PulsesSecure Pack",
+  "description": "# This PulseSecure content pack contains the following:\n\n## grok patttern \n * pulseuser\n\n## TCP UDP Input with extracor\n * Grok based extractor with match on String for apply\n## Streams\n * PulseSecure Global Stream with all extracted messages\n * PulseSecure Failed Logins contains all messages with failed status\n\n## Dashboard\n * PulseSecure",
+  "category": "Firewalls, Gateways",
+  "inputs": [
+    {
+      "id": "595c925a2ccf43470bacb54b",
+      "title": "TCP UDP",
+      "configuration": {
+        "expand_structured_data": false,
+        "recv_buffer_size": 262144,
+        "port": 1514,
+        "override_source": null,
+        "force_rdns": false,
+        "allow_override_date": true,
+        "bind_address": "0.0.0.0",
+        "store_full_message": true
+      },
+      "static_fields": {},
+      "type": "org.graylog2.inputs.syslog.udp.SyslogUDPInput",
+      "global": false,
+      "extractors": [
+        {
+          "title": "pulsesecure",
+          "type": "GROK",
+          "cursor_strategy": "COPY",
+          "target_field": "",
+          "source_field": "message",
+          "configuration": {
+            "grok_pattern": "%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{PROG:appliance}%{SPACE} %{PROG:software}:%{SPACE}%{TIMESTAMP_ISO8601:pulse_time}%{SPACE}-%{SPACE}%{NOTSPACE:code}%{SPACE}-%{SPACE}\\[%{IPORHOST:source_host}\\](?:%{NOTSPACE}|%{SPACE})%{SPACE}%{NOTSPACE}\\[\\]%{SPACE}-%{SPACE}%{DATA:pulse_action}\\'%{DATA:app_action_detail}\\'%{SPACE}%{DATA:pulse_status}%{SPACE}\\'%{IP:source_ip}\\'%{SPACE}%{WORD}\\ \\'%{MAC:source_mac}\\'%{SPACE}%{WORD}%{SPACE}%{WORD}\\ \\'%{PULSEUSER:pulse_loginuser}\\'(?:%{NOTSPACE}|%{SPACE}reason%{SPACE}\\'%{GREEDYDATA:pulse_reason}\\.\\'\\.)",
+            "named_captures_only": true
+          },
+          "converters": [],
+          "condition_type": "STRING",
+          "condition_value": "PulseS",
+          "order": 0
+        }
+      ]
+    }
+  ],
+  "streams": [
+    {
+      "id": "595cccb62ccf43470bacf49b",
+      "title": "PulseSecure Failed Logins",
+      "description": "PulseSecure Failed Logins will be delivered from the \"PulesSecure Global\" Stream after the messages are gone through the grok_extractor.",
+      "disabled": false,
+      "matching_type": "AND",
+      "stream_rules": [
+        {
+          "type": "EXACT",
+          "field": "pulse_status",
+          "value": "failed on host",
+          "inverted": false,
+          "description": "Match the filtered messages from the grok extractor for pulsesecure."
+        }
+      ],
+      "outputs": [],
+      "default_stream": false
+    },
+    {
+      "id": "595cdfaa2ccf43470bad0930",
+      "title": "PulseSecure Global",
+      "description": "PulseSecure Global contains all PulseSecure messages after they are processed by the pulsecure grok extractor.",
+      "disabled": false,
+      "matching_type": "AND",
+      "stream_rules": [
+        {
+          "type": "CONTAINS",
+          "field": "message",
+          "value": "PulseSecure",
+          "inverted": false,
+          "description": ""
+        }
+      ],
+      "outputs": [],
+      "default_stream": false
+    }
+  ],
+  "outputs": [],
+  "dashboards": [
+    {
+      "title": "PulseSecure",
+      "description": "PulseSecure Audit messages with pulse_status last 30minutes",
+      "dashboard_widgets": [
+        {
+          "description": "PulseSecure LoginAttempts (2h)",
+          "type": "SEARCH_RESULT_COUNT",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 7200
+            },
+            "lower_is_better": false,
+            "trend": true,
+            "query": "_exists_:pulse_status"
+          },
+          "col": 1,
+          "row": 2,
+          "height": 1,
+          "width": 2
+        },
+        {
+          "description": "PulseSecure LoginMessages (2h)",
+          "type": "SEARCH_RESULT_CHART",
+          "cache_time": 10,
+          "configuration": {
+            "interval": "minute",
+            "timerange": {
+              "type": "relative",
+              "range": 7200
+            },
+            "query": "_exists_:pulse_status"
+          },
+          "col": 1,
+          "row": 1,
+          "height": 1,
+          "width": 3
+        },
+        {
+          "description": "Login Success/Failed (2h)",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 7200
+            },
+            "field": "pulse_status",
+            "show_pie_chart": true,
+            "query": "_exists_:pulse_status",
+            "show_data_table": true
+          },
+          "col": 3,
+          "row": 2,
+          "height": 2,
+          "width": 1
+        }
+      ]
+    }
+  ],
+  "grok_patterns": [
+    {
+      "name": "PULSEUSER",
+      "pattern": "%{USER}\\\\%{INT}"
+    }
+  ],
+  "lookup_tables": [],
+  "lookup_caches": [],
+  "lookup_data_adapters": []
+}
