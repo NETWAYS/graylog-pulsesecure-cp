@@ -1,11 +1,11 @@
 {
   "name": "PulsesSecure Pack",
-  "description": "# This PulseSecure content pack contains the following:\n\n## grok patttern \n * pulseuser\n\n## TCP UDP Input with extracor\n * Grok based extractor with match on String for apply\n## Streams\n * PulseSecure Global Stream with all extracted messages\n * PulseSecure Failed Logins contains all messages with failed status\n\n## Dashboard\n * PulseSecure",
+  "description": "# This PulseSecure content pack contains the following:\n\n## grok patttern \n * PULSEUSER \n * PULSELOGON\n\n## UDP Input with extracor\n * Grok based extractor with match on String for apply\n## Streams\n * PulseSecure Global Stream with all extracted messages\n * PulseSecure Failed Logins contains all messages with failed status\n\n## Dashboard\n * PulseSecure",
   "category": "Firewalls, Gateways",
   "inputs": [
     {
       "id": "595c925a2ccf43470bacb54b",
-      "title": "TCP UDP",
+      "title": "UDP",
       "configuration": {
         "expand_structured_data": false,
         "recv_buffer_size": 262144,
@@ -27,7 +27,7 @@
           "target_field": "",
           "source_field": "message",
           "configuration": {
-            "grok_pattern": "%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{PROG:appliance}%{SPACE} %{PROG:software}:%{SPACE}%{TIMESTAMP_ISO8601:pulse_time}%{SPACE}-%{SPACE}%{NOTSPACE:code}%{SPACE}-%{SPACE}\\[%{IPORHOST:source_host}\\](?:%{NOTSPACE}|%{SPACE})%{SPACE}%{NOTSPACE}\\[\\]%{SPACE}-%{SPACE}%{DATA:pulse_action}\\'%{DATA:app_action_detail}\\'%{SPACE}%{DATA:pulse_status}%{SPACE}\\'%{IP:source_ip}\\'%{SPACE}%{WORD}\\ \\'%{MAC:source_mac}\\'%{SPACE}%{WORD}%{SPACE}%{WORD}\\ \\'%{PULSEUSER:pulse_loginuser}\\'(?:%{NOTSPACE}|%{SPACE}reason%{SPACE}\\'%{GREEDYDATA:pulse_reason}\\.\\'\\.)",
+            "grok_pattern": "%{PULSELOGON}",
             "named_captures_only": true
           },
           "converters": [],
@@ -140,6 +140,10 @@
     }
   ],
   "grok_patterns": [
+    {
+      "name": "PULSELOGON",
+      "pattern": "%{TIMESTAMP_ISO8601:timestamp}%{SPACE}%{PROG:pulse_appliance}%{SPACE} %{PROG:software}:%{SPACE}%{TIMESTAMP_ISO8601:pulse_time}%{SPACE}-%{SPACE}%{NOTSPACE:pulse_appliance}%{SPACE}-%{SPACE}\\[%{IPORHOST:pulse_source_host}\\](?:%{NOTSPACE}|%{SPACE})%{SPACE}%{NOTSPACE}\\[(?:%{NOTSPACE})?\\]%{SPACE}-%{SPACE}%{DATA:pulse_action}\\'%{DATA:pulse_app_action_detail}\\'%{SPACE}%{DATA:pulse_status}%{SPACE}\\'%{IP:pulse_source_ip}\\'%{SPACE}%{WORD}%{SPACE}\\'(?:%{MAC:pulse_source_mac})?\\'%{SPACE}%{WORD}%{SPACE}%{WORD}\\ \\'(%{PULSEUSER:pulse_loginuser}|%{WORD:pulse_loginuser})\\'(?:%{NOTSPACE}|%{SPACE}reason%{SPACE}\\'%{GREEDYDATA:pulse_reason}\\.\\'\\.)"
+    },
     {
       "name": "PULSEUSER",
       "pattern": "%{USER}\\\\%{INT}"

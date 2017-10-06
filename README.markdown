@@ -3,14 +3,16 @@
 # PulseSecure Content Pack
 
 This PulseSecure content pack can be used to collect and enrich your log data for
-a efficent analyzing and visibility
+a efficent analyzing and visibility of the user lgoings. This conetent pack only
+handling messages from your PulseSecure who are related to user logins.
 
 
 ## Includes
-* TCP and UDP Input on port 1514 with a grok extractor
+* UDP Input on port 1514 with a grok extractor
 * PulseSecure grok patttern
-* "PulseSecure Global" Stream with all extracted messages
-* Stream "PulseSecure Failed Logins" contains all messages with failed status
+* "PulseSecure Global" Stream with all extracted messages with one filter
+rule
+* Stream "PulseSecure Failed Logins" contains all messages with status failed based on a filter rule
 * Dashboards named "PulseSecure"
 
 ## Requirements
